@@ -1,20 +1,20 @@
-#include "fraction.h"
 #include <sstream>
 #include <cmath>
 #include <cstring>
 #include <iostream>
+#include "fraction.h"
 
 /************************************************************************************************ CONSTRUCTORS */
-fraction::fraction(long long numerator, long long denominator, long long whole): m_whole(whole), m_numerator(numerator), m_denominator(denominator)
+fraction::fraction(long long numerator, long long denominator, long long whole) : m_whole(whole), m_numerator(numerator), m_denominator(denominator)
 {}
-//fraction::fraction(long whole) : m_whole(whole), m_numerator(0), m_denominator(1)
-//{}
-//fraction::fraction(unsigned long whole) : m_whole(whole), m_numerator(0), m_denominator(1)
-//{}
-//fraction::fraction(int whole) : m_whole(whole), m_numerator(0), m_denominator(1)
-//{}
-//fraction::fraction(unsigned int whole) : m_whole(whole), m_numerator(0), m_denominator(1)
-//{}
+fraction::fraction(long whole) : m_whole(whole), m_numerator(0), m_denominator(1)
+{}
+fraction::fraction(unsigned long whole) : m_whole(whole), m_numerator(0), m_denominator(1)
+{}
+fraction::fraction(int whole) : m_whole(whole), m_numerator(0), m_denominator(1)
+{}
+fraction::fraction(unsigned int whole) : m_whole(whole), m_numerator(0), m_denominator(1)
+{}
 //fraction::fraction(short whole) : m_whole(whole), m_numerator(0), m_denominator(1)
 //{}
 //fraction::fraction(unsigned short whole) : m_whole(whole), m_numerator(0), m_denominator(1)
@@ -23,6 +23,7 @@ fraction::fraction(long long numerator, long long denominator, long long whole):
 //{}
 //fraction::fraction(unsigned char whole) : m_whole(whole), m_numerator(0), m_denominator(1)
 //{}
+
 fraction::fraction(float dec_fraction)
 {
 	bool sign = dec_fraction < 0;
@@ -39,7 +40,7 @@ fraction::fraction(double dec_fraction)
 	double whole;
 	double fract = modf(dec_fraction, &whole);
 	m_whole = whole;
-	__aproximate_real_number((sign)?-fract:fract);
+	__aproximate_real_number((sign) ? -fract : fract);
 	if (sign) m_numerator = -m_numerator;
 }
 
@@ -47,7 +48,7 @@ fraction::fraction(double dec_fraction)
 fraction fraction::normalize()
 {
 	/*fraction result = *this;
-	if (result.m_numerator >= result.m_denominator) 
+	if (result.m_numerator >= result.m_denominator)
 	{
 		result.m_whole += result.m_numerator / result.m_denominator;
 		result.m_numerator %= result.m_denominator;
@@ -55,10 +56,10 @@ fraction fraction::normalize()
 	auto numerator_factors = __get_simple_factors(result.m_numerator), denominator_factors = __get_simple_factors(result.m_denominator);
 	if (numerator_factors.size() > 1 && denominator_factors.size() > 1)
 	{
-		for (auto it = numerator_factors.begin(); it < numerator_factors.end(); it++) 
+		for (auto it = numerator_factors.begin(); it < numerator_factors.end(); it++)
 		{
 			auto denom_it = denominator_factors.end();
-			if ((denom_it = std::find(denominator_factors.begin(), denominator_factors.end(), *it)) != denominator_factors.end()) 
+			if ((denom_it = std::find(denominator_factors.begin(), denominator_factors.end(), *it)) != denominator_factors.end())
 			{
 				result.m_numerator /= *it;
 				result.m_denominator /= *it;
@@ -147,7 +148,7 @@ fraction fraction::operator-()
 	result.m_whole = -result.m_whole;
 	return result;
 }
-fraction fraction::operator-() const 
+fraction fraction::operator-() const
 {
 	fraction result = *this;
 	result.m_numerator = -result.m_numerator;
@@ -161,7 +162,7 @@ fraction fraction::operator++(int)
 	this->operator+=(fraction(1));
 	return result;
 }
-//pre increment
+//pre incrementS
 fraction& fraction::operator++()
 {
 	this->operator+=(fraction(1));
@@ -175,7 +176,7 @@ fraction fraction::operator--(int)
 	return result;
 }
 // pre-decrement
-fraction & fraction::operator--()
+fraction& fraction::operator--()
 {
 	this->operator-=(fraction(1));
 	return *this;
@@ -244,7 +245,7 @@ fraction::operator long double() const
 	result /= m_denominator;
 	return result;
 }
-fraction::operator const char*() const {
+fraction::operator const char* () const {
 	std::stringstream ss;
 	if (m_whole)
 	{
@@ -256,14 +257,14 @@ fraction::operator const char*() const {
 		}
 		else {
 			ss << m_whole << " + " << m_numerator << "/" << m_denominator;
-		} 
+		}
 	}
 	else {
 		if (!m_numerator)
 			ss << 0;
-		else 
+		else
 		{
-			ss <<  -m_numerator << "/" << m_denominator;
+			ss << -m_numerator << "/" << m_denominator;
 		}
 	}
 	char* result = new char[ss.str().length() + 1];
@@ -272,26 +273,26 @@ fraction::operator const char*() const {
 }
 
 /************************************************************************************************** ASSIGNMENT OPERATORS */
-fraction& fraction::operator+=(const fraction & other)
+fraction& fraction::operator+=(const fraction& other)
 {
 	double a = *this;
 	a += (double)other;
 	this->operator=(a);
 	return *this;
 }
-fraction & fraction::operator-=(const fraction & other)
+fraction& fraction::operator-=(const fraction& other)
 {
 	this->operator+=(-other);
 	return *this;
 }
-fraction & fraction::operator*=(const fraction & other)
+fraction& fraction::operator*=(const fraction& other)
 {
 	double a = *this;
 	a *= (double)other;
 	this->operator=(a);
 	return *this;
 }
-fraction & fraction::operator/=(const fraction & other)
+fraction& fraction::operator/=(const fraction& other)
 {
 	double a = *this;
 	a /= (double)other;
@@ -300,25 +301,25 @@ fraction & fraction::operator/=(const fraction & other)
 }
 
 /************************************************************************************************** ARITHMETIC OPERATORS */
-fraction fraction::operator+(const fraction & other)
+fraction fraction::operator+(const fraction& other)
 {
 	fraction tmp = *this;
 	tmp += other;
 	return tmp;
 }
-fraction fraction::operator-(const fraction & other)
+fraction fraction::operator-(const fraction& other)
 {
 	fraction tmp = *this;
 	tmp -= other;
 	return tmp;
 }
-fraction fraction::operator*(const fraction & other)
+fraction fraction::operator*(const fraction& other)
 {
 	fraction tmp = *this;
 	tmp *= other;
 	return tmp;
 }
-fraction fraction::operator/(const fraction & other)
+fraction fraction::operator/(const fraction& other)
 {
 	fraction tmp = *this;
 	tmp /= other;
@@ -326,29 +327,29 @@ fraction fraction::operator/(const fraction & other)
 }
 
 /************************************************************************************************** COMPARISON OPERATORS */
-bool fraction::operator==(const fraction & other)
+bool fraction::operator==(const fraction& other)
 {
 	double a = *this, b = other;
 	return a == b;
 }
-bool fraction::operator!=(const fraction & other)
+bool fraction::operator!=(const fraction& other)
 {
 	return !(*this == other);
 }
-bool fraction::operator>(const fraction & other)
+bool fraction::operator>(const fraction& other)
 {
 	double a = *this, b = other;
 	return a > b;
 }
-bool fraction::operator<(const fraction & other)
+bool fraction::operator<(const fraction& other)
 {
 	return !(*this > other) && *this != other;
 }
-bool fraction::operator>=(const fraction & other)
+bool fraction::operator>=(const fraction& other)
 {
 	return !(*this < other);
 }
-bool fraction::operator<=(const fraction & other)
+bool fraction::operator<=(const fraction& other)
 {
 	return !(*this > other);
 }

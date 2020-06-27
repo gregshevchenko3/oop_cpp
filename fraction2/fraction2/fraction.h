@@ -15,20 +15,20 @@ private:
 	 * Цей метод повинен був бути використаним для скорочення дробів (в методі normalize()), але набагато простіше
 	 * Перетворити дріб у double, а потім створити дріб з double.
 	 */
-	//std::vector<long long> __get_simple_factors(long long n);
+	 //std::vector<long long> __get_simple_factors(long long n);
 public:
 	fraction(long long numerator = 0, long long denominator = 1, long long whole = 0);
-	/*fraction(long whole);
+	fraction(long whole);
 	fraction(unsigned long whole);
 	fraction(int whole);
 	fraction(unsigned int whole);
-	fraction(short whole);
+	/*fraction(short whole);
 	fraction(unsigned short whole);
 	fraction(char);
 	fraction(unsigned char whole);*/
 	fraction(float dec_fraction);
 	fraction(double dec_fraction);
-	
+
 	/**
 	 * Виділяє з дробу цілу частину, і скорочує дріб.
 	 */
@@ -45,7 +45,7 @@ public:
 	fraction operator--(int);
 	fraction& operator--();
 
-	/** 
+	/**
 	 * Приведення типу до цілих відкидають дробну частину, і повертають цілу
 	 */
 	operator long long() const;
@@ -58,7 +58,7 @@ public:
 	operator unsigned short() const;
 	operator char() const;
 	operator unsigned char() const;
-	
+
 	/**
 	 * Перетворюють дроби з нормальних в десяткові.
 	 */
@@ -69,7 +69,7 @@ public:
 	/**
 	 * Повертає С-сроку-представлення дробу у вигляді m_whole + m_numerator/m_denumerator
 	 */
-	operator const char*() const;
+	operator const char* () const;
 
 	/**
 	 * Бінарні математичні операції
