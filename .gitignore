@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /String/out/build/x64-Debug (default)
+/String/out
