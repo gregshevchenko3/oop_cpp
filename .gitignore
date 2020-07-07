@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /String/out/build/x64-Debug (default)
 /String/out
+/Matrix/out/build/x64-Debug (default)
