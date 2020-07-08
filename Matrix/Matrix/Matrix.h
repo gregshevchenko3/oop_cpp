@@ -6,6 +6,7 @@
 #include <iostream>
 #include <functional>
 
+#define _BENCH
 class Matrix {
 	size_t m_rows, m_columns;
 	// double **m_matrix;

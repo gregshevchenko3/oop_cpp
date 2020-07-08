@@ -1,12 +1,13 @@
 #include "Matrix.h"
 #include <functional>
+#include <chrono>
 #include <iomanip>
 
-// #define MATRIX_CONSTRUCTOR_TEST
+ #define MATRIX_CONSTRUCTOR_TEST
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
 // #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
- #define MATRIX_INVERSE_TRANSPOSE_TEST
+// #define MATRIX_INVERSE_TRANSPOSE_TEST
 // #define MATRIX_DIVISION_TEST
 
 
@@ -24,35 +25,45 @@ int main() {
 		{4, 5,},
 		{7, 8,},
 	};
-	Matrix m0;
-	std::cout << "m0 = " << m0 << std::endl;
-	Matrix m1(1, 3);
-	std::cout << "m1 = " << m1 << std::endl;
-	Matrix m2(init, 3, 3);
-	std::cout << "m2 = " << m2 << std::endl;
-	Matrix m3 = init2d;
-	std::cout << "m3 = " << m3 << std::endl;
-	// Error: initializing: cannot convert from "initializer list" to "Matrix"
-	// What the "initializer list"?
-	// https://en.cppreference.com/w/cpp/utility/initializer_list
-	Matrix m4 = {
-		{1,  2,  3,  -4},
-		{5,  6,  -7,  8},
-		{9,  -10, 11, 12},
-		{-13, 14, 15, 16}
-	};
-	std::cout << "m4 = " << m4 << std::endl;
-	Matrix m6 = {{}};
-	std::cout << "m6 = " << m6 << std::endl;
-	Matrix m7 = {
-		{},
-		{1,},
-		{1, 2,},
-		{1, 2, 3,},
-		{1, 2, 3, 4,},
-	};
-	std::cout << "m7 = " << m7 << std::endl;
-
+#ifdef _BENCH
+	auto t1 = std::chrono::high_resolution_clock::now();
+	for (auto i = 0; i < 1000; i++) {
+#endif
+		Matrix m0;
+		Matrix m1(1, 3);
+		Matrix m2(init, 3, 3);
+		Matrix m3 = init2d;
+		// Error: initializing: cannot convert from "initializer list" to "Matrix"
+		// What the "initializer list"?
+		// https://en.cppreference.com/w/cpp/utility/initializer_list
+		Matrix m4 = {
+			{1,  2,  3,  -4},
+			{5,  6,  -7,  8},
+			{9,  -10, 11, 12},
+			{-13, 14, 15, 16}
+		};
+		Matrix m6 = { {} };
+		Matrix m7 = {
+			{},
+			{1,},
+			{1, 2,},
+			{1, 2, 3,},
+			{1, 2, 3, 4,},
+		};
+#ifdef _BENCH
+	}
+	auto t2 = std::chrono::high_resolution_clock::now();
+	auto T = (t2 - t1) / 1000;
+	std::cout << T.count() << std::endl;
+#else
+		std::cout << "m0 = " << m0 << std::endl;
+		std::cout << "m1 = " << m1 << std::endl;
+		std::cout << "m2 = " << m2 << std::endl;
+		std::cout << "m3 = " << m3 << std::endl;
+		std::cout << "m4 = " << m4 << std::endl;
+		std::cout << "m6 = " << m6 << std::endl;
+		std::cout << "m7 = " << m7 << std::endl;
+#endif
 	delete[] init[2];
 	delete[] init[1];
 	delete[] init[0];
