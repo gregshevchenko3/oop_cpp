@@ -3,24 +3,24 @@
 #include <chrono>
 #include <iomanip>
 
- #define MATRIX_CONSTRUCTOR_TEST
+// #define MATRIX_CONSTRUCTOR_TEST
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
 // #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
-// #define MATRIX_INVERSE_TRANSPOSE_TEST
+ #define MATRIX_INVERSE_TRANSPOSE_TEST
 // #define MATRIX_DIVISION_TEST
 
 
 int main() {
 #if defined(MATRIX_CONSTRUCTOR_TEST)
 {
-	double** init = new double* [3]{
-				new double[3]{ 1, 0, 0 },
-				new double[3]{ 0, 1, 0 },
-				new double[3]{ 0, 0, 1 },
+	Fraction** init = new Fraction* [3]{
+				new Fraction[3]{ 1, 0, 0 },
+				new Fraction[3]{ 0, 1, 0 },
+				new Fraction[3]{ 0, 0, 1 },
 	};
 
-	double init2d[3][2] = {
+	Fraction init2d[3][2] = {
 		{1, 2,},
 		{4, 5,},
 		{7, 8,},
@@ -148,18 +148,17 @@ int main() {
 		{1, 2, 3}
 	};
 	std::cout << "m1 = " << m1 << std::endl;
-	std::cout << "m1.determinant() = " << m1.determinant() << std::endl;
+	std::cout << "m1.determinant() = " << (std::string)m1.determinant() << std::endl;
 	std::cout << "m2 = " << m2 << std::endl;
-	std::cout << "m2.determinant() = " << m2.determinant() << std::endl;
+	std::cout << "m2.determinant() = " << (std::string)m2.determinant() << std::endl;
 	std::cout << "m3 = " << m3 << std::endl;
-	std::cout << "m3.determinant() = " << m3.determinant() << std::endl;
+	std::cout << "m3.determinant() = " << (std::string)m3.determinant() << std::endl;
 	std::cout << "m4 = " << m4 << std::endl;
-	std::cout << "m4.determinant() = " << m4.determinant() << std::endl;
+	std::cout << "m4.determinant() = " << (std::string)m4.determinant() << std::endl;
 }
 #endif
 #if defined(MATRIX_INVERSE_TRANSPOSE_TEST)
 {
-	std::cout << "0%5=" << 0 % 5 << std::endl;
 	Matrix m = {
 		{1, 2, -4},
 		{4, 4, 4},
@@ -169,7 +168,7 @@ int main() {
 	std::cout << "m.inverse() = " << m.inverse() << std::endl;
 	std::cout << "m.inverse().inverse() = " << m.inverse().inverse() << std::endl;
 	std::cout << "m*m.inverse () = " << (m * m.inverse()) << std::endl;
-	std::cout << "m.determinant() = " << m.determinant() << std::endl;
+	std::cout << "m.determinant() = " << (std::string)m.determinant() << std::endl;
 	Matrix m2 = {
 		{2, 8,},
 		{12, 7},
@@ -178,7 +177,7 @@ int main() {
 	std::cout << "m2.inverse() = " << m2.inverse() << std::endl;
 	std::cout << "m2.inverse().inverse() = " << m2.inverse().inverse() << std::endl;
 	std::cout << "m2*m2.inverse () = " << (m2 * m2.inverse()) << std::endl;
-	std::cout << "m2.determinant() = " << m2.determinant() << std::endl;
+	std::cout << "m2.determinant() = " << (std::string)m2.determinant() << std::endl;
 }
 #endif
 #if defined(MATRIX_DIVISION_TEST)

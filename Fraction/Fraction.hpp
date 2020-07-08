@@ -5,9 +5,9 @@
 
 class Fraction
 {
-	int integer;	//целая часть
-	int numerator;	//числитель
-	int denominator;//знаменатель
+	long long integer;	//целая часть
+	long long numerator;	//числитель
+	long long denominator;//знаменатель
 public:
 	int get_integer()const;
 	int get_numerator()const;
@@ -48,6 +48,7 @@ public:
 	Fraction& operator/=(const Fraction& other);
 
 	Fraction& operator++();
+	Fraction operator-();
 	Fraction& operator--();
 	Fraction operator++(int);
 	Fraction operator--(int);

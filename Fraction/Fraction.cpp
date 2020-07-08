@@ -116,12 +116,21 @@ Fraction& Fraction::operator_finalize()
 {
 	to_proper();
 	reduce();
+	if (denominator < 0) {
+		denominator = -denominator;
+		if (integer && numerator < 0) {
+			integer = -integer;
+		}
+		numerator = -numerator;
+	}
 	return* this;
 }
 void Fraction::operator_begin(Fraction& other)
 {
 	to_improper();
+	reduce();
 	other.to_improper();
+	other.reduce();
 }
 Fraction::operator bool()
 {
@@ -189,14 +198,21 @@ Fraction& Fraction::operator/=(const Fraction& other)
 	// TODO: insert return statement here
 	Fraction othr = other;
 	operator_begin(othr);
-	this->numerator *= othr.denominator;
-	this->denominator *= othr.numerator;
+	this->numerator *= othr.denominator/* * (othr.numerator > 0)?1:-1*/;
+	this->denominator *= /*(othr.numerator > 0) ? 1 : -1 **/ othr.numerator;
 	return operator_finalize();
 }
 Fraction& Fraction::operator++()
 {
 	// TODO: insert return statement here
 	return *this += 1;
+}
+Fraction Fraction::operator-()
+{
+	if (integer) integer = -integer;
+	else
+		if (numerator) numerator = -numerator;
+	return *this;
 }
 Fraction& Fraction::operator--()
 {

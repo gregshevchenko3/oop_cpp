@@ -10,20 +10,21 @@ Matrix::Matrix():m_rows(0), m_columns(0), m_matrix(nullptr)
 	std::cout << "Constructor empty matrix " << this << std::endl;
 #endif
 }
-Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns), m_matrix(new double[m_rows * m_columns]{ 0 }) 
+Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns), m_matrix(new Fraction[m_rows * m_columns]) 
 {
 #if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor zero matrix " << this << std::endl;
 #endif
+	for (auto i{ 0 }; i < m_columns * m_rows; i++) m_matrix[i] = 0;
 }
-Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
+Matrix::Matrix(Fraction** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
 {
 #if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor from dynamic array " << this << std::endl;
 #endif
 	for (int i = 0; i < m_rows; i++)
 	{
-		const double* row_begin = arr2d[i];
+		const Fraction* row_begin = arr2d[i];
 		std::copy(row_begin, row_begin + m_columns, m_matrix + i*m_rows);
 	}
 }
@@ -33,7 +34,7 @@ Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
  * В іграх та робототехніці точно не використати.
  * https ://en.cppreference.com/w/cpp/utility/initializer_list
  */
-Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
+Matrix::Matrix(std::initializer_list<std::initializer_list<Fraction>> list)
 {
 #if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor from initializer list " << this << std::endl;
@@ -57,7 +58,7 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 	}
 	else
 	{
-		m_matrix = new double[m_rows * m_columns];
+		m_matrix = new Fraction[m_rows * m_columns];
 
 		for (auto i = 0; i < m_rows; i++, row_it++) {
 			auto col_it = row_it->begin();
@@ -69,12 +70,12 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 		}
 	}
 }
-Matrix::Matrix(size_t rows, size_t columns, std::function<double(size_t row, size_t column)> expr) : m_rows(rows), m_columns(columns), m_matrix(new double[m_rows * m_columns])
+Matrix::Matrix(size_t rows, size_t columns, std::function<Fraction(size_t row, size_t column)> expr) : m_rows(rows), m_columns(columns), m_matrix(new Fraction[m_rows * m_columns])
 {
 #if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor with generator  " << m_matrix << std::endl;
 #endif
-	double* it = m_matrix, * end = m_matrix + m_rows * m_columns;
+	Fraction* it = m_matrix, * end = m_matrix + m_rows * m_columns;
 	size_t r = 0, c = 0;
 	while (it < end)
 	{
@@ -94,8 +95,8 @@ Matrix::Matrix(const Matrix& other)
 	else {
 		m_rows = other.m_rows;
 		m_columns = other.m_columns;
-		m_matrix = new double[m_rows * m_columns];
-		const double* row_begin = other.m_matrix;
+		m_matrix = new Fraction[m_rows * m_columns];
+		const Fraction* row_begin = other.m_matrix;
 		std::copy(row_begin, row_begin + m_columns * m_rows, m_matrix);
 	}
 };
@@ -127,18 +128,18 @@ Matrix Matrix::inverse()
 {
 	if (is_empty()) return *this;
 	if (m_rows != m_columns) return Matrix();
-	double determinant = this->determinant();
+	Fraction determinant = this->determinant();
 	if (!determinant)  return Matrix();
 	Matrix adjugate = Matrix(m_rows, m_columns, [this](size_t i, size_t j) {
 		return cofactor(i, j);
 		}).transpose();
-	return adjugate *= (1 / determinant);
+	return adjugate *= (Fraction(1) / determinant);
 }
-double Matrix::cofactor(size_t row, size_t column)
+Fraction Matrix::cofactor(size_t row, size_t column)
 {
-	return ((row + column) & 1)?-first_minor(row, column):first_minor(row, column);
+	return ((row + column) & 1)?-(first_minor(row, column)):first_minor(row, column);
 }
-double Matrix::first_minor(size_t row, size_t column)
+Fraction Matrix::first_minor(size_t row, size_t column)
 {
 	if (is_empty()) return 0;
 	if (m_rows != m_columns) return INFINITY;
@@ -151,9 +152,9 @@ double Matrix::first_minor(size_t row, size_t column)
 		return *(m_matrix + k*m_columns + l);
 		}).determinant();
 }
-double Matrix::determinant()
+Fraction Matrix::determinant()
 {
-	double result = 0;
+	Fraction result = 0;
 	if (m_rows != m_columns) return INFINITY;
 	if (is_empty()) return 0;
 	if (m_rows == 1) return m_matrix[0];
@@ -179,16 +180,16 @@ bool Matrix::is_empty() const
 {
 	return m_columns == 0 && m_rows == 0 && m_matrix == nullptr;
 }
-double Matrix::at(size_t row, size_t column) const
+Fraction Matrix::at(size_t row, size_t column) const
 {
 	if (row < m_rows && column < m_columns) 
 		return *(m_matrix + row*m_columns + column);
-	return 0;
+	return Fraction();
 }
 Matrix& Matrix::operator=(const Matrix& other)
 {
 	if (&other != this) {
-		double* tmp = nullptr;
+		Fraction* tmp = nullptr;
 		if (other.is_empty()) 
 		{
 			m_columns = m_rows = 0;
@@ -196,7 +197,7 @@ Matrix& Matrix::operator=(const Matrix& other)
 		else {
 			m_columns = other.m_columns;
 			m_rows = other.m_rows;
-			tmp = new double[m_rows * m_columns];
+			tmp = new Fraction[m_rows * m_columns];
 			std::copy(other.m_matrix, other.m_matrix + m_rows*m_columns, tmp);
 		}
 		__delete_m_matrix();
@@ -229,7 +230,7 @@ Matrix Matrix::operator-=(const Matrix& other)
 	}
 	return *this;
 }
-Matrix Matrix::operator*=(const double& num)
+Matrix Matrix::operator*=(const Fraction& num)
 {
 	if (is_empty()) return *this;
 	for (auto i = 0; i < m_rows * m_columns; i++)
@@ -238,7 +239,7 @@ Matrix Matrix::operator*=(const double& num)
 	}
 	return *this;
 }
-Matrix Matrix::operator/=(const double& num)
+Matrix Matrix::operator/=(const Fraction& num)
 {
 	if (is_empty()) return *this;
 	for (auto i = 0; i < m_rows * m_columns; i++)
@@ -269,9 +270,9 @@ Matrix operator*(const Matrix& left, const Matrix& right)
 		return Matrix();
 
 	return Matrix(left.get_rows(), right.get_columns(), [left, right](size_t i, size_t j){
-		double m_res = 0;
+		Fraction m_res = 0;
 		size_t lhs_row_size = left.m_columns, rhs_row_size = right.m_columns;
-		double* lhs = left.m_matrix + j * lhs_row_size, * rhs = right.m_matrix + i, *end = lhs + lhs_row_size;
+		Fraction* lhs = left.m_matrix + j * lhs_row_size, * rhs = right.m_matrix + i, *end = lhs + lhs_row_size;
 
 		while(lhs < end)
 		{
@@ -292,7 +293,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix& src)
 	out << std::endl;
 	for (auto ri = 0; ri < src.get_rows(); ri++) {
 		for (auto ci = 0; ci < src.get_columns(); ci++)
-			out << std::setw(12) << std::setprecision(4) << src.at(ri, ci);
+			out << std::setw(12) << std::setprecision(4) << (std::string)(src.at(ri, ci));
 		out << std::endl;
 	}
 	return out;
