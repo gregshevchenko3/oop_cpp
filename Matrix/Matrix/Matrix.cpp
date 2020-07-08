@@ -5,7 +5,11 @@
 #include <iomanip> // for std::setw()
 
 Matrix::Matrix():m_rows(0), m_columns(0), m_matrix(nullptr)
-{}
+{
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Constructor zero matrix " << this << std::endl;
+#endif
+}
 Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns)
 {
 	m_matrix = new double* [m_rows];
