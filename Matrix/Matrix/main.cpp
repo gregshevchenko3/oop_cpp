@@ -26,10 +26,6 @@ int main() {
 		{4, 5,},
 		{7, 8,},
 	};
-	double init2d_2[2][3] = {
-		{9, 8, 7},
-		{4, 5, 6},
-	};
 #ifdef _BENCH
 	auto t1 = std::chrono::high_resolution_clock::now();
 	for (auto i = 0; i < 1000; i++) {
@@ -37,19 +33,19 @@ int main() {
 		Matrix m0;
 		Matrix m1(1, 3);
 		Matrix m2(init, 3, 3);
-		Matrix m3 = init2d, m4 = init2d_2;
+		Matrix m3 = init2d;
 		// Error: initializing: cannot convert from "initializer list" to "Matrix"
 		// What the "initializer list"?
 		// https://en.cppreference.com/w/cpp/utility/initializer_list
-		Matrix m5 = {
+		Matrix m4 = {
 			{1,  2,  3,  -4},
 			{5,  6,  -7,  8},
 			{9,  -10, 11, 12},
 			{-13, 14, 15, 16}
 		};
 
-		Matrix m6 = { {} };
-		Matrix m7 = {
+		Matrix m5 = { {} };
+		Matrix m6 = {
 			{},
 			{1,},
 			{1, 2,},
@@ -69,7 +65,6 @@ int main() {
 	std::cout << "m4 = " << m4 << std::endl;
 	std::cout << "m5 = " << m5 << std::endl;
 	std::cout << "m6 = " << m6 << std::endl;
-	std::cout << "m7 = " << m7 << std::endl;
 #endif
 	delete[] init[2];
 	delete[] init[1];
