@@ -148,6 +148,7 @@ int main() {
 #endif
 #if defined(MATRIX_INVERSE_TRANSPOSE_TEST)
 {
+	std::cout << "0%5=" << 0 % 5 << std::endl;
 	Matrix m = {
 		{1, 2, -4},
 		{4, 4, 4},

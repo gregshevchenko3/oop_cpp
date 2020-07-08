@@ -6,16 +6,21 @@
 
 Matrix::Matrix():m_rows(0), m_columns(0), m_matrix(nullptr) 
 {
+#if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor empty matrix " << this << std::endl;
+#endif
 }
 Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns), m_matrix(new double[m_rows * m_columns]{ 0 }) 
 {
+#if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor zero matrix " << this << std::endl;
-
+#endif
 }
 Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
 {
+#if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor from dynamic array " << this << std::endl;
+#endif
 	for (int i = 0; i < m_rows; i++)
 	{
 		const double* row_begin = arr2d[i];
@@ -30,8 +35,9 @@ Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
  */
 Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 {
+#if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Constructor from initializer list " << this << std::endl;
-
+#endif
 	auto row_it = list.begin();
 	auto end_it = list.end();
 	size_t max_length = row_it->size();
@@ -65,18 +71,22 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 }
 Matrix::Matrix(size_t rows, size_t columns, std::function<double(size_t row, size_t column)> expr) : m_rows(rows), m_columns(columns), m_matrix(new double[m_rows * m_columns])
 {
-	std::cout << "Constructor with generator  " << this << std::endl;
-
-	for (auto i{ 0 }; i < rows; i++)
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Constructor with generator  " << m_matrix << std::endl;
+#endif
+	double* it = m_matrix, * end = m_matrix + m_rows * m_columns;
+	size_t r = 0, c = 0;
+	while (it < end)
 	{
-		for (auto j{ 0 }; j < m_columns; j++)
-			*(m_matrix + i * m_rows + j) = expr(i, j);
+		*it++ = expr(r, c++);
+		if (c == m_columns) c = 0, r++;
 	};
 }
 Matrix::Matrix(const Matrix& other) 
 {
+#if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "Copy Constructor " << this << std::endl;
-
+#endif
 	if (other.is_empty()) {
 		m_rows = m_columns = 0;
 		m_matrix = nullptr;
@@ -91,7 +101,9 @@ Matrix::Matrix(const Matrix& other)
 };
 Matrix::~Matrix()
 {
+#if defined(_DEBUG) && !defined (_BENCH)
 	std::cout << "destructor " << this << std::endl;
+#endif
 	if (m_matrix) {
 		delete[] m_matrix;
 		m_matrix = nullptr;
@@ -130,17 +142,14 @@ double Matrix::first_minor(size_t row, size_t column)
 {
 	if (is_empty()) return 0;
 	if (m_rows != m_columns) return INFINITY;
-	
-	Matrix result(m_rows - 1, m_columns - 1);
-	for (auto i = 0, j = 0; i < m_rows * m_columns; i++) 
-	{
-		if (i < row * m_columns || i >= (row + 1) * m_columns)
-		{
-			if (i % m_columns != column) 
-				result.m_matrix[j++] = m_matrix[i];
-		}
-	}
-	return result.determinant();
+	size_t k = 0, l = 0;
+	return Matrix(m_rows - 1, m_columns - 1, [this, row, column, &k, &l](size_t i, size_t j) {
+		if (i < row)  k = i;
+		else k = i+1;
+		if (j < column) l = j;
+		else l = j + 1;
+		return *(m_matrix + k*m_columns + l);
+		}).determinant();
 }
 double Matrix::determinant()
 {
