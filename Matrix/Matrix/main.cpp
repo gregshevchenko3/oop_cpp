@@ -1,13 +1,15 @@
 #include "Matrix.h"
 #include <functional>
+#include <chrono>
 #include <iomanip>
 
-// #define MATRIX_CONSTRUCTOR_TEST
+
+ #define MATRIX_CONSTRUCTOR_TEST
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
 // #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
 // #define MATRIX_INVERSE_TRANSPOSE_TEST
-#define MATRIX_DIVISION_TEST
+// #define MATRIX_DIVISION_TEST
 
 
 int main() {
@@ -28,29 +30,38 @@ int main() {
 		{9, 8, 7},
 		{4, 5, 6},
 	};
-	Matrix m0;
-	Matrix m1(1, 3);
-	Matrix m2(init, 3, 3);
-	Matrix m3 = init2d, m4 = init2d_2;
-	// Error: initializing: cannot convert from "initializer list" to "Matrix"
-	// What the "initializer list"?
-	// https://en.cppreference.com/w/cpp/utility/initializer_list
-	Matrix m5 = {
-		{1,  2,  3,  -4},
-		{5,  6,  -7,  8},
-		{9,  -10, 11, 12},
-		{-13, 14, 15, 16}
-	};
+#ifdef _BENCH
+	auto t1 = std::chrono::high_resolution_clock::now();
+	for (auto i = 0; i < 1000; i++) {
+#endif
+		Matrix m0;
+		Matrix m1(1, 3);
+		Matrix m2(init, 3, 3);
+		Matrix m3 = init2d, m4 = init2d_2;
+		// Error: initializing: cannot convert from "initializer list" to "Matrix"
+		// What the "initializer list"?
+		// https://en.cppreference.com/w/cpp/utility/initializer_list
+		Matrix m5 = {
+			{1,  2,  3,  -4},
+			{5,  6,  -7,  8},
+			{9,  -10, 11, 12},
+			{-13, 14, 15, 16}
+		};
 
-	Matrix m6 = {{}};
-	Matrix m7 = {
-		{},
-		{1,},
-		{1, 2,},
-		{1, 2, 3,},
-		{1, 2, 3, 4,},
-	};
-
+		Matrix m6 = { {} };
+		Matrix m7 = {
+			{},
+			{1,},
+			{1, 2,},
+			{1, 2, 3,},
+			{1, 2, 3, 4,},
+		};
+#ifdef _BENCH
+	}
+	auto t2 = std::chrono::high_resolution_clock::now();
+	auto T = (t2 - t1) / 1000;
+	std::cout << T.count() << std::endl;
+#else
 	std::cout << "m0 = " << m0 << std::endl;
 	std::cout << "m1 = " << m1 << std::endl;
 	std::cout << "m2 = " << m2 << std::endl;
@@ -59,7 +70,7 @@ int main() {
 	std::cout << "m5 = " << m5 << std::endl;
 	std::cout << "m6 = " << m6 << std::endl;
 	std::cout << "m7 = " << m7 << std::endl;
-
+#endif
 	delete[] init[2];
 	delete[] init[1];
 	delete[] init[0];

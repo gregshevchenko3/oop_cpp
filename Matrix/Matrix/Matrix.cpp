@@ -12,6 +12,9 @@ Matrix::Matrix():m_rows(0), m_columns(0), m_matrix(nullptr)
 }
 Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns)
 {
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Constructor zero matrix " << this << std::endl;
+#endif
 	m_matrix = new double* [m_rows];
 	for (auto i = 0; i < m_rows; i++)
 	{
@@ -20,6 +23,9 @@ Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns)
 }
 Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
 {
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Constructor from dynamic array " << this << std::endl;
+#endif
 	for (int i = 0; i < m_rows; i++)
 	{
 		const double* row_begin = arr2d[i];
@@ -34,9 +40,9 @@ Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
  */
 Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 {
-
-	
-
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Constructor from initializer_list" << this << std::endl;
+#endif
 	auto row_it = list.begin();
 	auto end_it = list.end();
 	size_t max_length = row_it->size();
@@ -62,6 +68,9 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 }
 Matrix::Matrix(size_t rows, size_t columns, std::function<double(size_t row, size_t column)> expr) : m_rows(rows), m_columns(columns)
 {
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Constructor with generator " << this << std::endl;
+#endif
 	m_matrix = new double* [m_rows];
 	for (auto i{ 0 }; i < rows; i++)
 	{
@@ -74,6 +83,9 @@ Matrix::Matrix(size_t rows, size_t columns, std::function<double(size_t row, siz
 }
 Matrix::Matrix(const Matrix& other) 
 {
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Copy Constructor " << this << std::endl;
+#endif
 	if (other.is_empty()) {
 		m_rows = m_columns = 0;
 		m_matrix = nullptr;
@@ -92,6 +104,9 @@ Matrix::Matrix(const Matrix& other)
 };
 Matrix::~Matrix()
 {
+#if defined(_DEBUG) && !defined (_BENCH)
+	std::cout << "Destructor " << this << std::endl;
+#endif
 	__delete_m_matrix();
 }
 inline void Matrix::__delete_m_matrix()
