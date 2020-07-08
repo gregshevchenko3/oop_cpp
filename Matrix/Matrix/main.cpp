@@ -27,7 +27,7 @@ int main() {
 	};
 #ifdef _BENCH
 	auto t1 = std::chrono::high_resolution_clock::now();
-	for (auto i = 0; i < 1000; i++) {
+	for (auto i = 0; i < 10000000; i++) {
 #endif
 		Matrix m0;
 		Matrix m1(1, 3);
@@ -53,7 +53,7 @@ int main() {
 #ifdef _BENCH
 	}
 	auto t2 = std::chrono::high_resolution_clock::now();
-	auto T = (t2 - t1) / 1000;
+	auto T = (t2 - t1) / 10000000;
 	std::cout << T.count() << std::endl;
 #else
 		std::cout << "m0 = " << m0 << std::endl;
