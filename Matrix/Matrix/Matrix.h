@@ -8,7 +8,18 @@
 
 class Matrix {
 	size_t m_rows, m_columns;
-	double **m_matrix;
+	// double **m_matrix;
+	/*
+	 * https://www.cyberforum.ru/cpp-beginners/thread37687.html
+	 * 4rray
+	 * 8 / 8 / 2
+	 * Регистрация: 15.12.2010
+	 * Сообщений: 41
+	 * 24.12.2010, 20:21	4
+	 * Тоже самое, только предварительно умножить матрицу на саму себя, а потом вычитать.
+	 * Кстати в плане быстродействия лучше хранить матрицы в одномерном массиве.
+	 */
+	double* m_matrix;
 public:
 	/**
 	 * Matrix m1;	// Empty matrix
@@ -83,13 +94,15 @@ public:
 	size_t get_rows() const;
 	size_t get_columns() const;
 	bool is_empty()const;
-	double* operator[](size_t index) const;
+	double at(size_t row, size_t column) const;
 
 	Matrix& operator=(const Matrix& other);
 	Matrix operator+=(const Matrix& other);
 	Matrix operator-=(const Matrix& other);
 	Matrix operator*=(const double& num);
 	Matrix operator/=(const double& num);
+
+	friend Matrix operator*(const Matrix& left, const Matrix& right);
 };
 /**
  * Matrices adding

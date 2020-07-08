@@ -6,8 +6,8 @@
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
 // #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
-// #define MATRIX_INVERSE_TRANSPOSE_TEST
-#define MATRIX_DIVISION_TEST
+ #define MATRIX_INVERSE_TRANSPOSE_TEST
+// #define MATRIX_DIVISION_TEST
 
 
 int main() {
@@ -24,25 +24,26 @@ int main() {
 		{4, 5,},
 		{7, 8,},
 	};
-	double init2d_2[2][3] = {
-		{9, 8, 7},
-		{4, 5, 6},
-	};
 	Matrix m0;
+	std::cout << "m0 = " << m0 << std::endl;
 	Matrix m1(1, 3);
+	std::cout << "m1 = " << m1 << std::endl;
 	Matrix m2(init, 3, 3);
-	Matrix m3 = init2d, m4 = init2d_2;
+	std::cout << "m2 = " << m2 << std::endl;
+	Matrix m3 = init2d;
+	std::cout << "m3 = " << m3 << std::endl;
 	// Error: initializing: cannot convert from "initializer list" to "Matrix"
 	// What the "initializer list"?
 	// https://en.cppreference.com/w/cpp/utility/initializer_list
-	Matrix m5 = {
+	Matrix m4 = {
 		{1,  2,  3,  -4},
 		{5,  6,  -7,  8},
 		{9,  -10, 11, 12},
 		{-13, 14, 15, 16}
 	};
-
+	std::cout << "m4 = " << m4 << std::endl;
 	Matrix m6 = {{}};
+	std::cout << "m6 = " << m6 << std::endl;
 	Matrix m7 = {
 		{},
 		{1,},
@@ -50,14 +51,6 @@ int main() {
 		{1, 2, 3,},
 		{1, 2, 3, 4,},
 	};
-
-	std::cout << "m0 = " << m0 << std::endl;
-	std::cout << "m1 = " << m1 << std::endl;
-	std::cout << "m2 = " << m2 << std::endl;
-	std::cout << "m3 = " << m3 << std::endl;
-	std::cout << "m4 = " << m4 << std::endl;
-	std::cout << "m5 = " << m5 << std::endl;
-	std::cout << "m6 = " << m6 << std::endl;
 	std::cout << "m7 = " << m7 << std::endl;
 
 	delete[] init[2];
@@ -69,29 +62,33 @@ int main() {
 #if defined(MATRIX_SUMARY_SUBSTRACTION_TEST)
 {
 	Matrix m1(1, 3);
-	Matrix m2(init, 3, 3);
-	Matrix m6 = {
+	Matrix m2{
+		{1, 0, 0,},
+		{0, 1, 0,},
+		{0, 0, 1,},
+	};
+	Matrix m3 = {
 		{1, 2, -3},
 		{2, 3, 4},
 		{3, 4, 5},
 	};
 	std::cout << "m1 = " << m1 << std::endl;
 	std::cout << "m2 = " << m2 << std::endl;
-	std::cout << "m6 = " << m6 << std::endl;
+	std::cout << "m3 = " << m3 << std::endl;
 
-	Matrix m = m2 + m6;
-	if (m.is_empty()) std::cout << "m2 + m6 cannot computed!" << std::endl;
+	Matrix m = m2 + m3;
+	if (m.is_empty()) std::cout << "m2 + m3 cannot computed!" << std::endl;
 	else
-		std::cout << "m2 + m6 = " << m << std::endl;
+		std::cout << "m2 + m3 = " << m << std::endl;
 	m = m1 + m2;
 	if (m.is_empty()) std::cout << "m1 + m2 cannot computed!" << std::endl;
 	else
 		std::cout << m << std::endl;
 
-	m = m2 - m6;
-	if (m.is_empty()) std::cout << "m2 - m6 cannot computed!" << std::endl;
+	m = m2 - m3;
+	if (m.is_empty()) std::cout << "m2 - m3 cannot computed!" << std::endl;
 	else
-		std::cout << "m2 - m6 = " << m << std::endl;
+		std::cout << "m2 - m3 = " << m << std::endl;
 	m = m2 - m1;
 	if (m.is_empty()) std::cout << "m2 - m1 cannot computed!" << std::endl;
 	else
@@ -130,12 +127,23 @@ int main() {
 		{5,       6,    7,  8,  0.9,},
 	};
 	Matrix m3 = {
+		{ 1,  2,  3,  4,},
+		{ 5,  6,  7,  8,},
+		{ 9, 10, 11, 12,},
+		{13, 14, 15, 16,},
+	};
+	
+	Matrix m4 = {
 		{1, 2, 3}
 	};
-	std::cout << "m1 = " << m1 << "m2 = " << m2 << "m3 = " << m3 << std::endl;
+	std::cout << "m1 = " << m1 << std::endl;
 	std::cout << "m1.determinant() = " << m1.determinant() << std::endl;
+	std::cout << "m2 = " << m2 << std::endl;
 	std::cout << "m2.determinant() = " << m2.determinant() << std::endl;
+	std::cout << "m3 = " << m3 << std::endl;
 	std::cout << "m3.determinant() = " << m3.determinant() << std::endl;
+	std::cout << "m4 = " << m4 << std::endl;
+	std::cout << "m4.determinant() = " << m4.determinant() << std::endl;
 }
 #endif
 #if defined(MATRIX_INVERSE_TRANSPOSE_TEST)
@@ -146,9 +154,19 @@ int main() {
 		{2, -2, 5},
 	};
 	std::cout << "m = " << m << std::endl;
+	std::cout << "m.inverse() = " << m.inverse() << std::endl;
 	std::cout << "m.inverse().inverse() = " << m.inverse().inverse() << std::endl;
 	std::cout << "m*m.inverse () = " << (m * m.inverse()) << std::endl;
 	std::cout << "m.determinant() = " << m.determinant() << std::endl;
+	Matrix m2 = {
+		{2, 8,},
+		{12, 7},
+	};
+	std::cout << "m2 = " << m2 << std::endl;
+	std::cout << "m2.inverse() = " << m2.inverse() << std::endl;
+	std::cout << "m2.inverse().inverse() = " << m2.inverse().inverse() << std::endl;
+	std::cout << "m2*m2.inverse () = " << (m2 * m2.inverse()) << std::endl;
+	std::cout << "m2.determinant() = " << m2.determinant() << std::endl;
 }
 #endif
 #if defined(MATRIX_DIVISION_TEST)
@@ -166,13 +184,14 @@ int main() {
 	};
 	std::cout << "m2 = " << m2 << std::endl;
 	std::cout << "m1/m2 = " << (m1 / m2) << std::endl;
-	std::cout << "m1*m2/m2 = " << (m1 * m2 / m2) << std::endl;
+	std::cout << "m2/m2 = " << (m2 / m2) << std::endl;
 	Matrix m3 = {
 		{2, 8,},
 		{12, 7},
 	};
 	std::cout << "m3 = " << m3 << std::endl;
-	std::cout << "m1/m3 = " << (m1 / m3) << std::endl;
+	std::cout << "m1/m3 = " << 
+		(m1 / m3) << std::endl;
 	Matrix m4 = {};
 
 	std::cout << "m4 = " << m4 << std::endl;
