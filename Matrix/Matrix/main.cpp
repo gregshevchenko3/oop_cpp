@@ -42,8 +42,8 @@ int main() {
 			{9,  -10, 11, 12},
 			{-13, 14, 15, 16}
 		};
-		Matrix m6 = { {} };
-		Matrix m7 = {
+		Matrix m5 = { {} };
+		Matrix m6 = {
 			{},
 			{1,},
 			{1, 2,},
@@ -61,8 +61,8 @@ int main() {
 		std::cout << "m2 = " << m2 << std::endl;
 		std::cout << "m3 = " << m3 << std::endl;
 		std::cout << "m4 = " << m4 << std::endl;
+		std::cout << "m5 = " << m5 << std::endl;
 		std::cout << "m6 = " << m6 << std::endl;
-		std::cout << "m7 = " << m7 << std::endl;
 #endif
 	delete[] init[2];
 	delete[] init[1];
