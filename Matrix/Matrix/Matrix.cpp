@@ -461,7 +461,7 @@ std::ostream& operator<<(std::ostream& out, const Matrix& src)
 	out << std::endl;
 	for (auto ri = 0; ri < src.get_rows(); ri++) {
 		for (auto ci = 0; ci < src.get_columns(); ci++)
-			out << std::setw(12) << std::setprecision(4) << (std::string)(src.at(ri, ci));
+			out << std::setw(12) << std::setprecision(4) << src.at(ri, ci);
 		out << std::endl;
 	}
 	return out;
