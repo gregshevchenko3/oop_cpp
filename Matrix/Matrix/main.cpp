@@ -134,9 +134,12 @@ int main() {
 		{2, 3},
 	};
 	Matrix m2 = {
-		{-2,      3,   -4,},
-		{-0.3, -0.4, -0.5,},
-		{5,       6,    7,}, 
+		{0,       0,    0,  0,    0, 0,},
+		{ 1,      2,    3,  4,  0.5, 0,},
+		{-2,      3,   -4,  5, -0.6, 0,},
+		{-0.3, -0.4, -0.5,  6,  0.7, 0,},
+		{4,       5,    6,  7, -0.8, 0,},
+		{5,       6,    7,  8,  0.9, 0,},
 	};
 	Matrix m3 = {
 		{ 1,  2,  3,  4,},
@@ -151,7 +154,7 @@ int main() {
 	std::cout << "m1 = " << m1 << std::endl;
 	std::cout << "m1.determinant() = " << (std::string)m1.determinant() << std::endl;
 	std::cout << "m2 = " << m2 << std::endl;
-	std::cout << "m2.determinant() = " << (std::string)m2.determinant() << std::endl;
+	std::cout << "m2.determinant() = " << (std::string)m2.determinant() << std::endl << std::endl;
 	std::cout << "m3 = " << m3 << std::endl;
 	std::cout << "m3.determinant() = " << (std::string)m3.determinant() << std::endl;
 	std::cout << "m4 = " << m4 << std::endl;
