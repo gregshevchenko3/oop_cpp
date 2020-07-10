@@ -1,0 +1,5 @@
+C:/Users/GregZZ/source/repos/NewRepo/oop_cpp/Matrix/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/GregZZ/source/repos/NewRepo/oop_cpp/Matrix/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/GregZZ/source/repos/NewRepo/oop_cpp/Matrix/out/build/x64-Debug/Matrix/CMakeFiles/Matrix.dir
+C:/Users/GregZZ/source/repos/NewRepo/oop_cpp/Matrix/out/build/x64-Debug/Matrix/CMakeFiles/edit_cache.dir
+C:/Users/GregZZ/source/repos/NewRepo/oop_cpp/Matrix/out/build/x64-Debug/Matrix/CMakeFiles/rebuild_cache.dir

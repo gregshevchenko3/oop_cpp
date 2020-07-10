@@ -110,6 +110,7 @@ Matrix::~Matrix()
 		m_matrix = nullptr;
 	}
 }
+
 inline void Matrix::__delete_m_matrix()
 {
 	if (m_matrix) {
@@ -117,6 +118,7 @@ inline void Matrix::__delete_m_matrix()
 		m_matrix = nullptr;
 	}
 }
+
 Matrix Matrix::transpose()
 {
 	if (is_empty()) return *this;
@@ -161,13 +163,19 @@ Fraction Matrix::determinant()
 	if (m_rows == 2) {
 		result = m_matrix[0] * m_matrix[3] - m_matrix[1] * m_matrix[2];
 	}
-	else 
+	else
+	{
+		int row = 0;
+		while (row < m_rows && is_row_empty(row)) row++;
+		if (row == m_rows) return 0;
 		for (auto i = 0; i < m_columns; i++)
 		{
-			result += m_matrix[i] * cofactor(0, i);
+			result += m_matrix[i] * cofactor(row, i);
 		}
+	}
 	return result;
 }
+
 size_t Matrix::get_rows() const
 {
 	return m_rows;
@@ -180,12 +188,145 @@ bool Matrix::is_empty() const
 {
 	return m_columns == 0 && m_rows == 0 && m_matrix == nullptr;
 }
+bool Matrix::is_row_empty(size_t row) const
+{
+	if (row >= m_rows || is_empty()) return false;
+	Fraction* begin = m_matrix + row * m_columns, *end = begin + m_columns;
+	bool result = true;
+	while (begin != end)
+	{
+		result = result && (*begin == (Fraction)0);
+		begin++;
+	}
+	return result;
+}
+bool Matrix::is_column_empty(size_t column) const
+{
+	if (column >= m_columns || is_empty()) return false;
+	bool result = true;
+	Fraction* begin = m_matrix + column, *end = begin + m_rows * m_columns;
+	while (begin < end) {
+		result = result && (*begin++ == Fraction(0));
+		begin += m_columns;
+	}
+	return result;
+}
 Fraction Matrix::at(size_t row, size_t column) const
 {
 	if (row < m_rows && column < m_columns) 
 		return *(m_matrix + row*m_columns + column);
 	return Fraction();
 }
+
+void Matrix::exchange_rows(size_t r1, size_t r2)
+{
+	if (r1 >= m_rows || r2 >= m_rows) 
+		return;
+	Fraction* dest = m_matrix + r1 * m_columns;
+	Fraction* src = m_matrix + r2 * m_columns;
+	Fraction* tmp = new Fraction[m_columns];
+
+	std::copy(dest, dest + m_columns, tmp);
+	std::copy(src, src + m_columns, dest);
+	std::copy(tmp, tmp + m_columns, src);
+
+	delete[] tmp;
+}
+void Matrix::exchange_columns(size_t c1, size_t c2)
+{
+	Matrix tmp = transpose();
+	tmp.exchange_rows(c1, c2);
+	*this = tmp.transpose();
+}
+void Matrix::insert_zero_row(size_t row_position)
+{
+	if (row_position > m_rows || is_empty()) return;
+	Fraction* result = new Fraction[(m_rows + 1) * m_columns], *tmp = result;
+	Fraction* row = new Fraction[m_columns];
+	for (int i{ 0 }; i < m_columns; i++) row[i] = 0;
+	std::copy(m_matrix, m_matrix + row_position * m_columns, tmp);
+	tmp += row_position * m_columns;
+	std::copy(row, row + m_columns, tmp);
+	tmp += m_columns;
+	std::copy(m_matrix + row_position * m_columns, m_matrix + m_columns * m_rows, tmp);
+	__delete_m_matrix();
+	m_rows++;
+	m_matrix = result;
+	delete[] row;
+}
+void Matrix::insert_zero_column(size_t column_position)
+{
+	Matrix tmp = transpose();
+	tmp.insert_zero_row(column_position);
+	*this = tmp.transpose();
+}
+void Matrix::remove_zero_rows()
+{
+	size_t new_rows = 0;
+	Fraction* tmp = nullptr, *result = nullptr;
+	if (is_empty()) return;
+	for (auto i{ 0 }; i < m_rows; i++)
+	{
+		if (!is_row_empty(i)) {
+			new_rows++;
+			tmp = new Fraction[new_rows * m_columns];
+			if (result) {
+				std::copy(result, result + m_columns * (new_rows - 1), tmp);
+				delete[] result;
+			}
+			result = tmp;
+
+			tmp += m_columns * (new_rows - 1);
+			std::copy(m_matrix + i * m_columns, m_matrix + (i + 1) * m_columns, tmp);
+		}
+	}
+	if (!new_rows) {
+		m_columns = m_rows = 0;
+		__delete_m_matrix();
+		delete[] result;
+	}
+	else {
+		m_rows = new_rows;
+		__delete_m_matrix();
+		m_matrix = result;
+	}
+}
+void Matrix::remove_zero_columns()
+{
+	Matrix tmp = transpose();
+	tmp.remove_zero_rows();
+	*this = tmp.transpose();
+}
+void Matrix::adding_rows(size_t r1, size_t r2)
+{
+	if (r1 >= m_rows || r2 >= m_rows) return;
+	Fraction* lhs = m_matrix + r1 * m_columns, * end = lhs + m_columns;
+	Fraction* rhs = m_matrix + r2 * m_columns;
+	while (lhs != end)
+	{
+		*lhs++ += *rhs++;
+	}
+}
+void Matrix::substracting_rows(size_t r1, size_t r2)
+{
+	if (r1 >= m_rows || r2 >= m_rows) return; 
+	Fraction* lhs = m_matrix + r1 * m_columns, *end = lhs + m_columns;
+	Fraction* rhs = m_matrix + r2 * m_columns;
+	while (lhs != end)
+	{
+		*lhs++ -= *rhs++;
+	}
+}
+void Matrix::scaling_the_row(size_t row, Fraction scalar)
+{
+	if (row >= m_rows) return;
+	Fraction* lhs = m_matrix + row * m_columns, * end = lhs + m_columns;
+	while (lhs != end)
+	{
+		*lhs++ *= scalar;
+	}
+}
+
 Matrix& Matrix::operator=(const Matrix& other)
 {
 	if (&other != this) {
@@ -248,6 +389,17 @@ Matrix Matrix::operator/=(const Fraction& num)
 	}
 	return *this;
 }
+
+Matrix Matrix::operator-()
+{
+	Matrix result = *this;
+	for (auto i{ 0 }; i < m_columns * m_rows; i++)
+	{
+		result.m_matrix[i] = -result.m_matrix[i];
+	}
+	return result;
+}
+
 Matrix operator+(Matrix left, Matrix right)
 {
 	return left += right;
@@ -287,6 +439,22 @@ Matrix operator/(Matrix left, Matrix right)
 	if (left.get_rows() != left.get_columns() || right.get_rows() != right.get_columns())
 		return Matrix();
 	return left * right.inverse();
+}
+
+bool operator==(const Matrix& left, const Matrix& right)
+{
+	bool result = left.m_rows == right.m_rows && right.m_columns == left.m_columns;
+	if (left.m_columns == 0 || right.m_columns == 0 || !result) return result;
+
+	for (auto i{ 0 }; i < left.m_rows * left.m_columns; i++)
+	{
+		result = result && left.m_matrix[i] == right.m_matrix[i];
+	}
+	return result;
+}
+bool operator!=(const Matrix& left, const Matrix& right)
+{
+	return !(left == right);
 }
 std::ostream& operator<<(std::ostream& out, const Matrix& src)
 {

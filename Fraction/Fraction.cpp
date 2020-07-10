@@ -58,6 +58,17 @@ Fraction::Fraction(float dec_fraction)
 	numerator = dec_fraction * 10000000;
 	denominator = 10000000;
 	reduce();
+	if (!integer) {
+		if (denominator < 0) {
+			denominator = -denominator;
+			numerator = -numerator;
+		}
+	}
+	else
+	{
+		if (denominator < 0)
+			denominator = -denominator;
+	}
 }
 Fraction::Fraction(double dec_fraction)
 {
@@ -72,17 +83,29 @@ Fraction::Fraction(double dec_fraction)
 	numerator = dec_fraction * 100000000;
 	denominator = 100000000;
 	reduce();
+	if (!integer) {
+		if (denominator < 0) {
+			denominator = -denominator;
+			numerator = -numerator;
+		}
+	} 
+	else
+	{
+		if (denominator < 0) 
+			denominator = -denominator;
+	}
 }
+/* -2(1/2)*/
 //			Methods:
 Fraction& Fraction::to_proper()
 {
-	integer += numerator / denominator;
+	integer = (integer > 0)?integer + numerator / denominator : ((integer)? integer - numerator / denominator : numerator / denominator);
 	numerator %= denominator;
 	return *this;
 }
 Fraction& Fraction::to_improper()
 {
-	numerator += integer * denominator;
+	numerator = (integer > 0)? numerator + integer * denominator : ((integer) ? integer - numerator / denominator : numerator);
 	integer = 0;
 	return *this;
 }
@@ -116,13 +139,6 @@ Fraction& Fraction::operator_finalize()
 {
 	to_proper();
 	reduce();
-	if (denominator < 0) {
-		denominator = -denominator;
-		if (integer && numerator < 0) {
-			integer = -integer;
-		}
-		numerator = -numerator;
-	}
 	return* this;
 }
 void Fraction::operator_begin(Fraction& other)
@@ -197,9 +213,10 @@ Fraction& Fraction::operator/=(const Fraction& other)
 {
 	// TODO: insert return statement here
 	Fraction othr = other;
+	if (other == 0) throw std::logic_error("division by zero");
 	operator_begin(othr);
-	this->numerator *= othr.denominator/* * (othr.numerator > 0)?1:-1*/;
-	this->denominator *= /*(othr.numerator > 0) ? 1 : -1 **/ othr.numerator;
+	this->numerator *= othr.denominator;
+	this->denominator *=  othr.numerator;
 	return operator_finalize();
 }
 Fraction& Fraction::operator++()

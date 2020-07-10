@@ -23,6 +23,10 @@ void main()
 	std::cout << (std::string)A << " - " << (std::string)B << " = " << (std::string)(A - B) << std::endl;
 	std::cout << (std::string)A << " * " << (std::string)B << " = " << (std::string)(A * B) << std::endl;
 	std::cout << (std::string)A << " / " << (std::string)B << " = " << (std::string)(A / B) << std::endl;
+	std::cout << (std::string)Fraction(-0.3) << " / " << (std::string)Fraction(-0.3) << " = " << (std::string)(Fraction(-0.3) / Fraction(-0.3)) << std::endl;
+	std::cout << (std::string)Fraction(0.3) << " / " << (std::string)Fraction(-0.3) << " = " << (std::string)(Fraction(0.3) / Fraction(-0.3)) << std::endl;
+	std::cout << (std::string)Fraction(-0.3) << " * " << (std::string)Fraction(-0.3) << " = " << (std::string)(Fraction(-0.3) / Fraction(-0.3)) << std::endl;
+	std::cout << (std::string)Fraction(0.3) << " * " << (std::string)Fraction(-0.3) << " = " << (std::string)(Fraction(0.3) / Fraction(-0.3)) << std::endl;
 
 	std::cout << "(double)3(7/50) = " << (double)C << std::endl;
 

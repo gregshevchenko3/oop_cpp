@@ -6,9 +6,12 @@
 // #define MATRIX_CONSTRUCTOR_TEST
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
-// #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
- #define MATRIX_INVERSE_TRANSPOSE_TEST
+ #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
+// #define MATRIX_INVERSE_TRANSPOSE_TEST
 // #define MATRIX_DIVISION_TEST
+// #define MATRIX_ADD_REMOVE_EMPTY_ROWS_COLUMNS_AND_EXCHANGE_ROWS_TEST
+// #define MATRIX_ADDING_SUBSTRACTING_ROWS_AND_SCALING_ROW_TEST
+// #define MATRIX_OPERATOR_UNARY_MINUS_AND_EQUALS_OPERATORS
 
 
 int main() {
@@ -131,11 +134,9 @@ int main() {
 		{2, 3},
 	};
 	Matrix m2 = {
-		{ 1,      2,    3,  4,  0.5,},
-		{-2,      3,   -4,  5, -0.6,},
-		{-0.3, -0.4, -0.5,  6,  0.7,},
-		{4,       5,    6,  7, -0.8,},
-		{5,       6,    7,  8,  0.9,},
+		{-2,      3,   -4,},
+		{-0.3, -0.4, -0.5,},
+		{5,       6,    7,}, 
 	};
 	Matrix m3 = {
 		{ 1,  2,  3,  4,},
@@ -208,6 +209,64 @@ int main() {
 	std::cout << "m4 = " << m4 << std::endl;
 	std::cout << "m1/m4 = " << (m1 / m4) << std::endl;
 }
+#endif
+#if defined(MATRIX_ADD_REMOVE_EMPTY_ROWS_COLUMNS_AND_EXCHANGE_ROWS_TEST)
+	Matrix m44 = {
+		{0, 0, 0, 0,},
+		{0, 1, 0, 2,},
+		{0, 0, 0, 0,},
+		{0, 3, 0, 4,},
+	};
+	m44.remove_zero_rows();
+	std::cout << m44 << std::endl;
+	m44.remove_zero_columns();
+	std::cout << m44 << std::endl;
+
+	m44.insert_zero_row(1);
+	std::cout << m44 << std::endl;
+	m44.insert_zero_row(0);
+	std::cout << m44 << std::endl;
+
+	m44.insert_zero_column(1);
+	std::cout << m44 << std::endl;
+	m44.insert_zero_column(0);
+	std::cout << m44 << std::endl;
+
+	m44.exchange_rows(0, 1);
+	std::cout << m44 << std::endl;
+	m44.exchange_columns(0, 1);
+	std::cout << m44 << std::endl;
+#endif
+#if defined(MATRIX_ADDING_SUBSTRACTING_ROWS_AND_SCALING_ROW_TEST)
+	Matrix m44 = {
+		{ 1,  2,  3,  4,},
+		{ 5,  6,  7,  8,},
+		{ 9, 10, 11, 12,},
+		{13, 14, 15, 16,},
+	};
+	std::cout << m44 << std::endl;
+
+	m44.adding_rows(1, 2);
+	std::cout << m44 << std::endl;
+
+	m44.substracting_rows(1, 0);
+	std::cout << m44 << std::endl;
+
+	m44.scaling_the_row(0, 10.0);
+	std::cout << m44 << std::endl;
+#endif
+#if defined(MATRIX_OPERATOR_UNARY_MINUS_AND_EQUALS_OPERATORS)
+	Matrix m44 = {
+		{-0.1, -0.2,  0.3,  0.4,},
+		{-0.5, -0.6,  0.7,  0.8,},
+		{ 0.9,  1.0, -1.1, -1.2f,},
+		{ 1.3,  1.5, -1.6, -1.7f,},
+	};
+	std::cout << m44 << std::endl;
+	std::cout << -m44 << std::endl;
+	std::cout << std::boolalpha << (m44 != -m44) << std::endl;
+	std::cout << (m44 == m44) << std::endl;
+
 #endif
 	return 0;
 }
