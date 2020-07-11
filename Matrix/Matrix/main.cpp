@@ -6,18 +6,19 @@
 // #define MATRIX_CONSTRUCTOR_TEST
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
-#define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
+// #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
 // #define MATRIX_INVERSE_TRANSPOSE_TEST
 // #define MATRIX_DIVISION_TEST
 // #define MATRIX_ADD_REMOVE_EMPTY_ROWS_COLUMNS_AND_EXCHANGE_ROWS_TEST
 // #define MATRIX_ADDING_SUBSTRACTING_ROWS_AND_SCALING_ROW_TEST
 // #define MATRIX_OPERATOR_UNARY_MINUS_AND_EQUALS_OPERATORS
+ #define MATRIX_MINOR_GENERAL_DEFINITION_TEST
 
 
 int main() {
 #if defined(MATRIX_CONSTRUCTOR_TEST)
 	{
-		double** init = new double * [3]{
+		double** init = new double* [3]{
 					new double[3]{ 1, 0, 0 },
 					new double[3]{ 0, 1, 0 },
 					new double[3]{ 0, 0, 1 },
@@ -270,6 +271,15 @@ int main() {
 		std::cout << std::boolalpha << (m44 != -m44) << std::endl;
 		std::cout << (m44 == m44) << std::endl;
 
+#endif
+#if defined(MATRIX_MINOR_GENERAL_DEFINITION_TEST)
+		Matrix m32 = {
+			{1, 1,},
+			{2, -3,},
+			{5, -5,},
+		};
+		size_t rows[] = { 0, 2 }, cols[] = {0, 1};
+		std::cout << m32.minor(rows, cols, 2) << std::endl; // must be -10.
 #endif
 		return 0;
 }

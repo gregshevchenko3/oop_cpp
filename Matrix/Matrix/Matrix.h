@@ -88,6 +88,7 @@ public:
 	Matrix inverse();
 	double cofactor(size_t row, size_t column);
 	double first_minor(size_t row, size_t column);
+	double Matrix::minor(size_t rows_indexes[], size_t columns_indexes[], size_t order);
 	double determinant();
 
 	size_t get_rows() const;

@@ -4,7 +4,7 @@
 #include "String.hpp"
 #include <cstring>
 
-String::String() : m_str(new char[80]), m_size(80)
+String::String() : m_str(new char[80] {0}), m_size(80)
 {}
 String::String(int size) : m_str(new char[size]), m_size(size)
 {}
@@ -25,14 +25,12 @@ size_t String::size() const
 {
 	return m_size;
 }
-char String::operator[](int position) const
+char& String::operator[](int position) const
 {
-	if (position >= m_size) return 0;
 	return m_str[position];
 }
-char String::operator[](int position)
+char& String::operator[](int position)
 {
-	if (position >= m_size) return 0;
 	return m_str[position];
 }
 //String& String::operator=(const String& other)
@@ -60,6 +58,31 @@ std::ostream& operator<<(std::ostream& out, const String str)
 	int sz = str.size();
 	for (int i = 0; i < sz; i++) out << str[i];
 	return out;
+}
+
+std::istream& operator>>(std::istream& in, String& str)
+{
+	auto last_non_zero_index = 0;
+	for (auto i{0}; i < str.size(); i++)
+		if (str[i]) last_non_zero_index++;
+
+	while ('\n' != in.peek()) {
+		if (last_non_zero_index < str.size())
+			str[last_non_zero_index++] = in.get();
+		else {
+			last_non_zero_index++;
+			char ch[2] = { in.get(), 0, };
+			str += ch;
+		}
+	} 
+	if (last_non_zero_index < str.size()) {
+		char* tmp = new char[last_non_zero_index];
+		std::copy(str.m_str, str.m_str + last_non_zero_index, tmp);
+		delete[] str.m_str;
+		str.m_str = tmp;
+		str.m_size = last_non_zero_index;
+	}
+	return in;
 }
 
 String operator+(String left, const String& right)

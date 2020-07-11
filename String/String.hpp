@@ -18,15 +18,18 @@ public:
 
 	// Getters
 	size_t size() const;
-	char operator[](int position) const;
+	char& operator[](int position) const;
 	// Getter & setter
-	char operator[](int position);
+	char& operator[](int position);
 
 	//String& operator=(const String& other);
 	String& operator+=(const String& other);
+	friend std::istream& operator>>(std::istream& in, String& str);
+
 };
 
 std::ostream& operator<<(std::ostream& out, const String str);
+std::istream& operator>>(std::istream& in, String& str);
 String operator+(String left, const String& right);
 
 // TODO: Reference additional headers your program requires here.
