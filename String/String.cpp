@@ -57,7 +57,7 @@ String& String::operator+=(const String& other)
 std::ostream& operator<<(std::ostream& out, const String str)
 {
 	// TODO: insert return statement here
-	int sz = str.size();
+	auto sz = str.size();
 	for (int i = 0; i < sz; i++) out << str[i];
 	return out;
 }

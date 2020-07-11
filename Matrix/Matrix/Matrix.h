@@ -20,14 +20,14 @@ public:
 	 * Matrix m1 = {3, 3}	// Square matrix with 3 rows and 3 coluumns, where each element is 0.
 	 */
 	Matrix(size_t rows, size_t columns);
-	
+
 	/**
-	 * double** m2_init = new int*[3];
+	 * double** m2_init = ...;
 	 * for (int i = 0; i < 3; i++)
 	 * {
-	 *		m2_init[i] = new int[3]
+	 *		. . . .
 	 *		for(int j = 0; j < 3; j++)
-	 *			m2_init[i][j] = 3*i + j + 1;
+	 *			. . . .
 	 * }
 	 * Matrix m2(m2_init, 3, 3); // Square matrix from dynamic memory
 	 */
@@ -44,7 +44,7 @@ public:
 	 * Зроблено за принципом реалізації std::copy(), але потрібного ефекту досягти не вдалося.
 	 * Все одно спочатку потрібно створити масив, а потім передати його в конструктор, що незручно.
 	 */
-	template <size_t R, size_t C> Matrix(double (&arr2d)[R][C]);
+	template <size_t R, size_t C> Matrix(double(&arr2d)[R][C]);
 
 	/**
 	 * потрібний ефект, якого я ддобивався, щоб писати так:
@@ -80,18 +80,33 @@ public:
 	double first_minor(size_t row, size_t column);
 	double determinant();
 
-
-
 	size_t get_rows() const;
 	size_t get_columns() const;
 	bool is_empty()const;
+	bool is_row_empty(size_t row) const;
+	bool is_column_empty(size_t column) const;
 	double* operator[](size_t index) const;
+
+	void exchange_rows(size_t r1, size_t r2);
+	void exchange_columns(size_t c1, size_t c2);
+	void insert_zero_row(size_t row_position);
+	void insert_zero_column(size_t column_position);
+	void remove_zero_rows();
+	void remove_zero_columns();
+	void adding_rows(size_t r1, size_t r2);
+	void substracting_rows(size_t r1, size_t r2);
+	void scaling_the_row(size_t row, double scalar);
 
 	Matrix& operator=(const Matrix& other);
 	Matrix operator+=(const Matrix& other);
 	Matrix operator-=(const Matrix& other);
 	Matrix operator*=(const double& num);
 	Matrix operator/=(const double& num);
+
+	Matrix operator-();
+
+	friend Matrix operator*(const Matrix& left, const Matrix& right);
+	friend bool operator==(const Matrix& left, const Matrix& right);
 };
 /**
  * Matrices adding
@@ -116,6 +131,8 @@ Matrix operator*(const Matrix& left, const Matrix& right);
 
 /** Matrices division by matrices production left and right^-1 */
 Matrix operator/(Matrix left, Matrix right);
+bool operator==(const Matrix& left, const Matrix& right);
+bool operator!=(const Matrix& left, const Matrix& right);
 
 std::ostream& operator<<(std::ostream& out, const Matrix& src);
 

@@ -196,10 +196,130 @@ bool Matrix::is_empty() const
 {
 	return m_columns == 0 && m_rows == 0 && m_matrix == nullptr;
 }
+bool Matrix::is_row_empty(size_t row) const
+{
+	bool result = true;
+	if (row >= m_rows || is_empty()) return false;
+	for (auto i{ 0 }; i < m_columns; i++)
+	{
+		result = result && m_matrix[row][i] == 0;
+	}
+	return result;
+}
+bool Matrix::is_column_empty(size_t column) const
+{
+	bool result = true;
+	if (column >= m_columns || is_empty()) return false;
+	for (auto i{ 0 }; i < m_rows; i++)
+	{
+		result = result && m_matrix[i][m_columns] == 0;
+	}
+	return result;
+}
 double* Matrix::operator[](size_t index) const
 {
 	if (index < m_rows) return m_matrix[index];
 	return nullptr;
+}
+void Matrix::exchange_rows(size_t r1, size_t r2)
+{
+	if (r1 >= m_rows || r2 >= m_rows || r1 == r2) return;
+	double* tmp = new double[m_columns];
+	std::copy(m_matrix[r1], m_matrix[r1] + m_columns, tmp);
+	std::copy(m_matrix[r2], m_matrix[r2] + m_columns, m_matrix[r1]);
+	std::copy(tmp, tmp + m_columns, m_matrix[r2]);
+	delete[] tmp;
+}
+void Matrix::exchange_columns(size_t c1, size_t c2)
+{
+	Matrix tmp = transpose();
+	tmp.exchange_columns(c1, c2);
+	*this = tmp.transpose();
+}
+void Matrix::insert_zero_row(size_t row_position)
+{
+	if (row_position > m_rows || is_empty())
+		return;
+	double** tmp = new double*[m_rows++];
+	for (auto i{ 0 }; i < m_rows; i++)
+	{
+		tmp[i] = new double[m_columns] {0};
+		if (i < row_position) 
+		{
+			std::copy(m_matrix[i], m_matrix[i] + m_columns, tmp[i]);
+		} 
+		else if (i > row_position)
+		{
+			std::copy(m_matrix[i - 1], m_matrix[i - 1] + m_columns, tmp[i]);
+		}
+	}
+	__delete_m_matrix();
+	m_matrix = tmp;
+}
+void Matrix::insert_zero_column(size_t column_position)
+{
+	Matrix tmp = transpose();
+	tmp.insert_zero_row(column_position);
+	*this = tmp.transpose();
+}
+void Matrix::remove_zero_rows()
+{
+	if (is_empty()) return;
+	double** tmp{ nullptr } result{tmp};
+	size_t new_rows{0}
+	for (auto i{ 0 }; i < m_rows; i++)
+	{
+		if (!is_row_empty(i)) {
+			new_rows++;
+			result = new double* [new_rows];
+			if (!tmp) {
+				std::copy(tmp, tmp + new_rows - 1, result);
+				delete [] tmp
+			}
+			tmp = result;
+			tmp[new_rows - 1] = m_matrix[i];
+		}
+		else {
+			delete m_matrix[i];
+		}
+	}
+	if (!new_rows)
+	{
+		m_rows = m_columns = 0;
+		delete[] m_matrix;
+		m_matrix = result = tmp = nullptr;
+	} 
+	else {
+		m_rows = new_rows;
+		delete[] m_matrix;
+		m_matrix = result;
+	}
+}
+void Matrix::remove_zero_columns()
+{
+	Matrix tmp = transpose();
+	tmp.remove_zero_rows();
+	*this = tmp.transpose();
+}
+void Matrix::adding_rows(size_t r1, size_t r2)
+{
+	if (r1 >= m_rows || r2 >= m_rows)
+		return;
+	for (auto i{ 0 }; i < m_columns; i++)
+		m_matrix[r1][i] += m_matrix[r2][i];
+}
+void Matrix::substracting_rows(size_t r1, size_t r2)
+{
+	if (r1 >= m_rows || r2 >= m_rows)
+		return;
+	for (auto i{ 0 }; i < m_columns; i++)
+		m_matrix[r1][i] -= m_matrix[r2][i];
+}
+void Matrix::scaling_the_row(size_t row, double scalar)
+{
+	if (row >= m_rows) return;
+	for (auto i{ 0 }; i < m_columns; i++)
+		m_matrix[row][i] *= scalar;
 }
 Matrix& Matrix::operator=(const Matrix& other)
 {
@@ -280,6 +400,12 @@ Matrix Matrix::operator/=(const double& num)
 	}
 	return *this;
 }
+Matrix Matrix::operator-()
+{
+	for (auto i{ 0 }; i < m_rows; i++)
+		for (auto j{ 0 }; j < m_columns; j++)
+			m_matrix[i][j] = -m_matrix[i][j];
+}
 Matrix operator+(Matrix left, Matrix right)
 {
 	return left += right;
@@ -319,6 +445,16 @@ Matrix operator/(Matrix left, Matrix right)
 	if (left.get_rows() != left.get_columns() || right.get_rows() != right.get_columns())
 		return Matrix();
 	return left * right.inverse();
+}
+bool operator==(const Matrix& left, const Matrix& right)
+{
+	bool result{ true };
+	result = result && left.m_rows == right.m_rows && left.m_columns == right.m_columns;
+	if (!result) return result;
+	for (auto i{ 0 }; i < m_rows; i++)
+		for (auto j{ 0 }; j < m_columns; j++)
+			result = result && left[i][j] == right[i][j];
+	return result;
 }
 std::ostream& operator<<(std::ostream& out, const Matrix& src)
 {
