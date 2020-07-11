@@ -90,6 +90,7 @@ public:
 	Matrix inverse();
 	Fraction cofactor(size_t row, size_t column);
 	Fraction first_minor(size_t row, size_t column);
+	Fraction minor(size_t rows_indexes[], size_t columns_indexes[], size_t order);
 	Fraction determinant();
 
 	size_t get_rows() const;

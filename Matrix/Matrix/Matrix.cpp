@@ -3,6 +3,7 @@
 
 #include "Matrix.h"
 #include <iomanip> // for std::setw()
+#include <algorithm>
 
 Matrix::Matrix():m_rows(0), m_columns(0), m_matrix(nullptr) 
 {
@@ -152,6 +153,17 @@ Fraction Matrix::first_minor(size_t row, size_t column)
 		if (j < column) l = j;
 		else l = j + 1;
 		return *(m_matrix + k*m_columns + l);
+		}).determinant();
+}
+Fraction Matrix::minor(size_t rows_indexes[], size_t columns_indexes[], size_t order)
+{
+	if (!rows_indexes || !columns_indexes || order == 0 || order > m_rows || order > m_columns)
+		return INFINITY;
+	if (is_empty()) return 0;
+	std::sort(rows_indexes, rows_indexes + order);
+	std::sort(columns_indexes, columns_indexes + order);
+	return Matrix(order, order, [this, rows_indexes, columns_indexes](size_t r, size_t c) {
+		return at(rows_indexes[r], columns_indexes[c]);
 		}).determinant();
 }
 Fraction Matrix::determinant()
