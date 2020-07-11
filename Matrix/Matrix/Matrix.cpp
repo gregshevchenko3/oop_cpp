@@ -265,8 +265,8 @@ void Matrix::insert_zero_column(size_t column_position)
 void Matrix::remove_zero_rows()
 {
 	if (is_empty()) return;
-	double** tmp{ nullptr } result{tmp};
-	size_t new_rows{0}
+	double** tmp{ nullptr },**result{ tmp };
+	size_t new_rows{ 0 };
 	for (auto i{ 0 }; i < m_rows; i++)
 	{
 		if (!is_row_empty(i)) {
@@ -274,7 +274,7 @@ void Matrix::remove_zero_rows()
 			result = new double* [new_rows];
 			if (!tmp) {
 				std::copy(tmp, tmp + new_rows - 1, result);
-				delete [] tmp
+				delete[] tmp;
 			}
 			tmp = result;
 			tmp[new_rows - 1] = m_matrix[i];
@@ -402,9 +402,11 @@ Matrix Matrix::operator/=(const double& num)
 }
 Matrix Matrix::operator-()
 {
+	Matrix tmp = *this;
 	for (auto i{ 0 }; i < m_rows; i++)
 		for (auto j{ 0 }; j < m_columns; j++)
-			m_matrix[i][j] = -m_matrix[i][j];
+			tmp.m_matrix[i][j] = -tmp.m_matrix[i][j];
+	return tmp;
 }
 Matrix operator+(Matrix left, Matrix right)
 {
@@ -451,10 +453,14 @@ bool operator==(const Matrix& left, const Matrix& right)
 	bool result{ true };
 	result = result && left.m_rows == right.m_rows && left.m_columns == right.m_columns;
 	if (!result) return result;
-	for (auto i{ 0 }; i < m_rows; i++)
-		for (auto j{ 0 }; j < m_columns; j++)
+	for (auto i{ 0 }; i < left.get_rows(); i++)
+		for (auto j{ 0 }; j < left.get_columns(); j++)
 			result = result && left[i][j] == right[i][j];
 	return result;
+}
+bool operator!=(const Matrix& left, const Matrix& right)
+{
+	return !(left == right);
 }
 std::ostream& operator<<(std::ostream& out, const Matrix& src)
 {
