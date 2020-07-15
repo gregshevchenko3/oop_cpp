@@ -5,24 +5,22 @@
 #include <iomanip> // for std::setw()
 #include <algorithm>
 
+//B#ifdef _DEBUG
+#include "../../CBenchmark/CBenchmark/CBenchmark.hpp"
+//#endif
+
 Matrix::Matrix() :m_rows(0), m_columns(0), m_matrix(nullptr)
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "Constructor empty matrix " << this << std::endl;
-#endif
+	TRACE;
 }
 Matrix::Matrix(size_t rows, size_t columns) : m_rows(rows), m_columns(columns), m_matrix(new double[m_rows * m_columns])
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "Constructor zero matrix " << this << std::endl;
-#endif
+	TRACE;
 	for (auto i{ 0 }; i < m_columns * m_rows; i++) m_matrix[i] = 0;
 }
 Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "Constructor from dynamic array " << this << std::endl;
-#endif
+	TRACE;
 	for (int i = 0; i < m_rows; i++)
 	{
 		const double* row_begin = arr2d[i];
@@ -37,9 +35,7 @@ Matrix::Matrix(double** arr2d, size_t rows, size_t cols) : Matrix(rows, cols)
  */
 Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "Constructor from initializer list " << this << std::endl;
-#endif
+	TRACE;;
 	auto row_it = list.begin();
 	auto end_it = list.end();
 	size_t max_length = row_it->size();
@@ -73,9 +69,7 @@ Matrix::Matrix(std::initializer_list<std::initializer_list<double>> list)
 }
 Matrix::Matrix(size_t rows, size_t columns, std::function<double(size_t row, size_t column)> expr) : m_rows(rows), m_columns(columns), m_matrix(new double[m_rows * m_columns])
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "Constructor with generator  " << m_matrix << std::endl;
-#endif
+	TRACE;;
 	double* it = m_matrix, * end = m_matrix + m_rows * m_columns;
 	size_t r = 0, c = 0;
 	while (it < end)
@@ -86,9 +80,7 @@ Matrix::Matrix(size_t rows, size_t columns, std::function<double(size_t row, siz
 }
 Matrix::Matrix(const Matrix& other)
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "Copy Constructor " << this << std::endl;
-#endif
+	TRACE;
 	if (other.is_empty()) {
 		m_rows = m_columns = 0;
 		m_matrix = nullptr;
@@ -100,12 +92,19 @@ Matrix::Matrix(const Matrix& other)
 		const double* row_begin = other.m_matrix;
 		std::copy(row_begin, row_begin + m_columns * m_rows, m_matrix);
 	}
-};
+}
+Matrix::Matrix(Matrix&& other)
+{
+	TRACE;
+	m_matrix = other.m_matrix;
+	m_columns = other.m_columns;
+	m_rows = other.m_rows;
+	m_matrix = nullptr;
+}
+;
 Matrix::~Matrix()
 {
-#if defined(_DEBUG) && !defined (_BENCH)
-	std::cout << "destructor " << this << std::endl;
-#endif
+	TRACE;
 	if (m_matrix) {
 		delete[] m_matrix;
 		m_matrix = nullptr;
@@ -122,6 +121,7 @@ inline void Matrix::__delete_m_matrix()
 
 Matrix Matrix::transpose()
 {
+	TRACE;
 	if (is_empty()) return *this;
 	return Matrix(m_columns, m_rows, [this](size_t r, size_t c) {
 		return *(m_matrix + c * m_columns + r);
@@ -129,21 +129,25 @@ Matrix Matrix::transpose()
 }
 Matrix Matrix::inverse()
 {
+	TRACE;
 	if (is_empty()) return *this;
 	if (m_rows != m_columns) return Matrix();
 	double determinant = this->determinant();
 	if (!determinant)  return Matrix();
 	Matrix adjugate = Matrix(m_rows, m_columns, [this](size_t i, size_t j) {
 		return cofactor(i, j);
-		}).transpose();
-		return adjugate *= (1 / determinant);
+		});
+	adjugate.transpose();
+	return adjugate *= (1 / determinant);
 }
 double Matrix::cofactor(size_t row, size_t column)
 {
+	TRACE;
 	return ((row + column) & 1) ? -(first_minor(row, column)) : first_minor(row, column);
 }
 double Matrix::first_minor(size_t row, size_t column)
 {
+	TRACE;
 	if (is_empty()) return 0;
 	if (m_rows != m_columns) return INFINITY;
 	size_t k = 0, l = 0;
@@ -157,6 +161,7 @@ double Matrix::first_minor(size_t row, size_t column)
 }
 double Matrix::minor(size_t rows_indexes[], size_t columns_indexes[], size_t order)
 {
+	TRACE;
 	if (!rows_indexes || !columns_indexes || order == 0 || order > m_rows || order > m_columns)
 		return INFINITY;
 	if (is_empty()) return 0;
@@ -168,6 +173,7 @@ double Matrix::minor(size_t rows_indexes[], size_t columns_indexes[], size_t ord
 }
 double Matrix::determinant()
 {
+	TRACE;
 	double result = 0;
 	if (m_rows != m_columns) return INFINITY;
 	if (is_empty()) return 0;
@@ -190,18 +196,22 @@ double Matrix::determinant()
 
 size_t Matrix::get_rows() const
 {
+	TRACE;
 	return m_rows;
 }
 size_t Matrix::get_columns() const
 {
+	TRACE;
 	return m_columns;
 }
 bool Matrix::is_empty() const
 {
+	TRACE;
 	return m_columns == 0 && m_rows == 0 && m_matrix == nullptr;
 }
 bool Matrix::is_row_empty(size_t row) const
 {
+	TRACE;
 	if (row >= m_rows || is_empty()) return false;
 	double* begin = m_matrix + row * m_columns, * end = begin + m_columns;
 	bool result = true;
@@ -214,6 +224,7 @@ bool Matrix::is_row_empty(size_t row) const
 }
 bool Matrix::is_column_empty(size_t column) const
 {
+	TRACE;
 	if (column >= m_columns || is_empty()) return false;
 	bool result = true;
 	double* begin = m_matrix + column, *end = begin + m_rows * m_columns;
@@ -225,6 +236,7 @@ bool Matrix::is_column_empty(size_t column) const
 }
 double Matrix::at(size_t row, size_t column) const
 {
+	TRACE;
 	if (row < m_rows && column < m_columns)
 		return *(m_matrix + row * m_columns + column);
 	return 0;
@@ -232,6 +244,7 @@ double Matrix::at(size_t row, size_t column) const
 
 void Matrix::exchange_rows(size_t r1, size_t r2)
 {
+	TRACE;
 	if (r1 >= m_rows || r2 >= m_rows || r1 == r2)
 		return;
 	double* dest = m_matrix + r1 * m_columns;
@@ -246,12 +259,14 @@ void Matrix::exchange_rows(size_t r1, size_t r2)
 }
 void Matrix::exchange_columns(size_t c1, size_t c2)
 {
+	TRACE;
 	Matrix tmp = transpose();
 	tmp.exchange_rows(c1, c2);
 	*this = tmp.transpose();
 }
 void Matrix::insert_zero_row(size_t row_position)
 {
+	TRACE;
 	if (row_position > m_rows || is_empty()) return;
 	double* result = new double[(m_rows + 1) * m_columns], * tmp = result;
 	double* row = new double[m_columns];
@@ -268,12 +283,14 @@ void Matrix::insert_zero_row(size_t row_position)
 }
 void Matrix::insert_zero_column(size_t column_position)
 {
+	TRACE;
 	Matrix tmp = transpose();
 	tmp.insert_zero_row(column_position);
 	*this = tmp.transpose();
 }
 void Matrix::remove_zero_rows()
 {
+	TRACE;
 	size_t new_rows = 0;
 	double* tmp = nullptr, * result = nullptr;
 	if (is_empty()) return;
@@ -305,12 +322,14 @@ void Matrix::remove_zero_rows()
 }
 void Matrix::remove_zero_columns()
 {
+	TRACE;
 	Matrix tmp = transpose();
 	tmp.remove_zero_rows();
 	*this = tmp.transpose();
 }
 void Matrix::adding_rows(size_t r1, size_t r2)
 {
+	TRACE;
 	if (r1 >= m_rows || r2 >= m_rows) return;
 	double* lhs = m_matrix + r1 * m_columns, * end = lhs + m_columns;
 	double* rhs = m_matrix + r2 * m_columns;
@@ -321,6 +340,7 @@ void Matrix::adding_rows(size_t r1, size_t r2)
 }
 void Matrix::substracting_rows(size_t r1, size_t r2)
 {
+	TRACE;
 	if (r1 >= m_rows || r2 >= m_rows) return;
 	double* lhs = m_matrix + r1 * m_columns, * end = lhs + m_columns;
 	double* rhs = m_matrix + r2 * m_columns;
@@ -331,6 +351,7 @@ void Matrix::substracting_rows(size_t r1, size_t r2)
 }
 void Matrix::scaling_the_row(size_t row, double scalar)
 {
+	TRACE;
 	if (row >= m_rows) return;
 	double* lhs = m_matrix + row * m_columns, * end = lhs + m_columns;
 	while (lhs != end)
@@ -341,6 +362,7 @@ void Matrix::scaling_the_row(size_t row, double scalar)
 
 Matrix& Matrix::operator=(const Matrix& other)
 {
+	TRACE;
 	if (&other != this) {
 		double* tmp = nullptr;
 		if (other.is_empty())
@@ -360,6 +382,7 @@ Matrix& Matrix::operator=(const Matrix& other)
 }
 Matrix Matrix::operator+=(const Matrix& other)
 {
+	TRACE;
 	if (is_empty() || other.is_empty()) return *this;
 	if (m_rows != other.m_rows || m_columns != other.m_columns) {
 		__delete_m_matrix();
@@ -374,6 +397,7 @@ Matrix Matrix::operator+=(const Matrix& other)
 }
 Matrix Matrix::operator-=(const Matrix& other)
 {
+	TRACE;
 	if (is_empty() || other.is_empty()) return *this;
 	if (m_rows != other.m_rows || m_columns != other.m_columns)
 		return Matrix();
@@ -385,6 +409,7 @@ Matrix Matrix::operator-=(const Matrix& other)
 }
 Matrix Matrix::operator*=(const double& num)
 {
+	TRACE;
 	if (is_empty()) return *this;
 	for (auto i = 0; i < m_rows * m_columns; i++)
 	{
@@ -394,6 +419,7 @@ Matrix Matrix::operator*=(const double& num)
 }
 Matrix Matrix::operator/=(const double& num)
 {
+	TRACE;
 	if (is_empty()) return *this;
 	for (auto i = 0; i < m_rows * m_columns; i++)
 	{
@@ -404,6 +430,7 @@ Matrix Matrix::operator/=(const double& num)
 
 Matrix Matrix::operator-()
 {
+	TRACE;
 	Matrix result = *this;
 	for (auto i{ 0 }; i < m_columns * m_rows; i++)
 	{
@@ -414,22 +441,27 @@ Matrix Matrix::operator-()
 
 Matrix operator+(Matrix left, Matrix right)
 {
+	TRACE;
 	return left += right;
 }
 Matrix operator-(Matrix left, Matrix right)
 {
+	TRACE;
 	return left -= right;
 }
 Matrix operator*(Matrix left, double num)
 {
+	TRACE;
 	return left *= num;
 }
 Matrix operator/(Matrix left, double num)
 {
+	TRACE;
 	return left /= num;
 }
 Matrix operator*(const Matrix& left, const Matrix& right)
 {
+	TRACE;
 	if (left.get_columns() != right.get_rows() || left.is_empty() || right.is_empty())
 		return Matrix();
 
@@ -448,6 +480,7 @@ Matrix operator*(const Matrix& left, const Matrix& right)
 }
 Matrix operator/(Matrix left, Matrix right)
 {
+	TRACE;
 	if (left.get_rows() != left.get_columns() || right.get_rows() != right.get_columns())
 		return Matrix();
 	return left * right.inverse();
@@ -455,6 +488,7 @@ Matrix operator/(Matrix left, Matrix right)
 
 bool operator==(const Matrix& left, const Matrix& right)
 {
+	TRACE;
 	bool result = left.m_rows == right.m_rows && right.m_columns == left.m_columns;
 	if (left.m_columns == 0 || right.m_columns == 0 || !result) return result;
 
@@ -466,10 +500,12 @@ bool operator==(const Matrix& left, const Matrix& right)
 }
 bool operator!=(const Matrix& left, const Matrix& right)
 {
+	TRACE;
 	return !(left == right);
 }
 std::ostream& operator<<(std::ostream& out, const Matrix& src)
 {
+	TRACE;
 	out << std::endl;
 	for (auto ri = 0; ri < src.get_rows(); ri++) {
 		for (auto ci = 0; ci < src.get_columns(); ci++)

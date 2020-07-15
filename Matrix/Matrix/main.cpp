@@ -2,20 +2,66 @@
 #include <functional>
 #include <chrono>
 #include <iomanip>
+#include <fstream>
+
+#include "../../CBenchmark/CBenchmark/CBenchmark.hpp"
 
 // #define MATRIX_CONSTRUCTOR_TEST
 // #define MATRIX_SUMARY_SUBSTRACTION_TEST
 // #define MATRIX_SCALING_MULTIPLICTION_TEST
-// #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
+ #define MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST
 // #define MATRIX_INVERSE_TRANSPOSE_TEST
 // #define MATRIX_DIVISION_TEST
 // #define MATRIX_ADD_REMOVE_EMPTY_ROWS_COLUMNS_AND_EXCHANGE_ROWS_TEST
 // #define MATRIX_ADDING_SUBSTRACTING_ROWS_AND_SCALING_ROW_TEST
 // #define MATRIX_OPERATOR_UNARY_MINUS_AND_EQUALS_OPERATORS
- #define MATRIX_MINOR_GENERAL_DEFINITION_TEST
+// #define MATRIX_MINOR_GENERAL_DEFINITION_TEST
 
+ // #define MATRIX_CONSTUCTOR_BENCHMARK
+
+BENCHMARKING("E:/test.json");
 
 int main() {
+	//std::cout << "THIS" << *this << std::endl;
+#if defined(MATRIX_CONSTUCTOR_BENCHMARK)
+	size_t order = 2;
+	Timer t;
+	BenchmarkGraphics bench(BenchmarkGraphics::scale_type::logaarithmic);
+	while (order <= 8192) {
+		Timer::t_duration d(0);
+		//for (int i{ 0 }; i < 10; i++)
+		{
+			t.start();
+			double** mat = new double* [order];
+			for (int i{ 0 }; i < order; i++)
+			{
+				mat[i] = new double[order];
+				for (int j{ 0 }; j < order; j++)
+				{
+					mat[i][j] = (double)std::rand() / RAND_MAX - 2;
+				}
+			}
+			{
+				Matrix m(mat, order, order);
+			}
+			for (int i{ 0 }; i < order; i++)
+				delete[] mat[i];
+			delete[] mat;
+			d += t.stop();
+		}
+		bench.add_point(point_type(order, d.count()));
+		std::cout << bench.get_points().back().x() << " " << bench.get_points().back().y() << std::endl;
+		std::cout << order << " " << d.count() << std::endl;
+		order *= 2;
+	}
+	std::ofstream svg("test.svg");
+	bench.set_viewport(640, 480).set_axis_legend("Matrix Order", "Time");
+	bench.run(svg);
+	bench.run(std::cout);
+#endif
+/*
+ * 
+*/
 #if defined(MATRIX_CONSTRUCTOR_TEST)
 	{
 		double** init = new double* [3]{
@@ -130,19 +176,18 @@ int main() {
 #endif
 #if defined(MATRIX_DETERMINANT_FIRST_MINOR_COMPLEMENT_TEST)
 		{
-			Matrix m1 = {
+			/*Matrix m1 = {
 				{1, 2},
 				{2, 3},
-			};
+			};*/
 			Matrix m2 = {
-				{0,       0,    0,  0,    0, 0,},
-				{ 1,      2,    3,  4,  0.5, 0,},
-				{-2,      3,   -4,  5, -0.6, 0,},
-				{-0.3, -0.4, -0.5,  6,  0.7, 0,},
-				{4,       5,    6,  7, -0.8, 0,},
-				{5,       6,    7,  8,  0.9, 0,},
+				{ 1,      2,    3,  4,  0.5,},
+				{-2,      3,   -4,  5, -0.6,},
+				{-0.3, -0.4, -0.5,  6,  0.7,},
+				{4,       5,    6,  7, -0.8,},
+				{5,       6,    7,  8,  0.9,},
 			};
-			Matrix m3 = {
+			/*Matrix m3 = {
 				{ 1,  2,  3,  4,},
 				{ 5,  6,  7,  8,},
 				{ 9, 10, 11, 12,},
@@ -151,15 +196,15 @@ int main() {
 
 			Matrix m4 = {
 				{1, 2, 3}
-			};
-			std::cout << "m1 = " << m1 << std::endl;
-			std::cout << "m1.determinant() = " << m1.determinant() << std::endl;
+			};*/
+			/*std::cout << "m1 = " << m1 << std::endl;
+			std::cout << "m1.determinant() = " << m1.determinant() << std::endl;*/
 			std::cout << "m2 = " << m2 << std::endl;
 			std::cout << "m2.determinant() = " << m2.determinant() << std::endl << std::endl;
-			std::cout << "m3 = " << m3 << std::endl;
+			/*std::cout << "m3 = " << m3 << std::endl;
 			std::cout << "m3.determinant() = " << m3.determinant() << std::endl;
 			std::cout << "m4 = " << m4 << std::endl;
-			std::cout << "m4.determinant() = " << m4.determinant() << std::endl;
+			std::cout << "m4.determinant() = " << m4.determinant() << std::endl;*/
 		}
 #endif
 #if defined(MATRIX_INVERSE_TRANSPOSE_TEST)
@@ -173,16 +218,19 @@ int main() {
 			std::cout << "m.inverse() = " << m.inverse() << std::endl;
 			std::cout << "m.inverse().inverse() = " << m.inverse().inverse() << std::endl;
 			std::cout << "m*m.inverse () = " << (m * m.inverse()) << std::endl;
-			std::cout << "m.determinant() = " << (std::string)m.determinant() << std::endl;
+			std::cout << "m.determinant() = " << m.determinant() << std::endl;
 			Matrix m2 = {
 				{2, 8,},
 				{12, 7},
 			};
 			std::cout << "m2 = " << m2 << std::endl;
-			std::cout << "m2.inverse() = " << m2.inverse() << std::endl;
+			std::cout << std::endl << "===========================================================================" << std::endl;
+			Matrix m3 = m2.inverse();
+			std::cout << std::endl << "===========================================================================" << std::endl;
+			std::cout << "m2.inverse() = " << m3 << std::endl;
 			std::cout << "m2.inverse().inverse() = " << m2.inverse().inverse() << std::endl;
 			std::cout << "m2*m2.inverse () = " << (m2 * m2.inverse()) << std::endl;
-			std::cout << "m2.determinant() = " << (std::string)m2.determinant() << std::endl;
+			std::cout << "m2.determinant() = " << m2.determinant() << std::endl;
 		}
 #endif
 #if defined(MATRIX_DIVISION_TEST)

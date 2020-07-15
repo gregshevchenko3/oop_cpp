@@ -6,7 +6,10 @@
 #include <iostream>
 #include <functional>
 
-//#define _BENCH
+#ifdef _DEBUG
+#include "../../CBenchmark/CBenchmark/CBenchmark.hpp"
+#endif
+
 class Matrix {
 	size_t m_rows, m_columns;
 	// double **m_matrix;
@@ -80,6 +83,7 @@ public:
 	 */
 	Matrix(size_t rows, size_t columns, std::function<double(size_t row, size_t column)> expr);
 	Matrix(const Matrix& other);
+	Matrix(Matrix&& other);
 	~Matrix();
 private:
 	inline void __delete_m_matrix();

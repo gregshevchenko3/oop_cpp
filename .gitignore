@@ -263,3 +263,6 @@ __pycache__/
 /String/out
 /Matrix/out/build/x64-Debug (default)
 /Matrix/out/build/x64-Debug/.cmake/api/v1/reply
+/Matrix/out/build/x64-Release
+/CBenchmark/out/build
+/Matrix/out/build/x64-Debug
